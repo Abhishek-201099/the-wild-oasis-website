@@ -2,6 +2,7 @@ import { Suspense } from "react";
 
 import CabinList from "@/app/_components/CabinList";
 import Spinner from "@/app/_components/Spinner";
+import Loading from "./loading";
 
 export const metadata = {
   title: "Cabins",
@@ -10,6 +11,8 @@ export const metadata = {
 export default function Page() {
   return (
     <div>
+      {/* This part is not concerned with data fetching so need not show loading spinner.
+          And so the data fetching logic is separated into another file and then wrapped with suspense */}
       <h1 className="text-4xl mb-5 text-accent-400 font-medium">
         Our Luxury Cabins
       </h1>
@@ -26,7 +29,7 @@ export default function Page() {
           The whole component of Page don't need to be replaced with Spinner, only the CabinList.
           For such granular control over loading we wrap the data fetching concerned component in suspense. */}
 
-      <Suspense fallback={<Spinner />}>
+      <Suspense fallback={<Loading />}>
         <CabinList />
       </Suspense>
     </div>
