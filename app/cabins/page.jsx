@@ -1,14 +1,21 @@
 import { Suspense } from "react";
 
 import CabinList from "@/app/_components/CabinList";
-import Spinner from "@/app/_components/Spinner";
 import Loading from "./loading";
+import Filter from "../_components/Filter";
+
+// As this component is now dynamically rendered so we can no longer use revalidate here as it is not static.
+// export const revalidate=0;
 
 export const metadata = {
   title: "Cabins",
 };
 
-export default function Page() {
+export default function Page({ searchParams }) {
+  // Search params are available to page.jsx
+  // As searchParams are only known at runtime this component is now dynamic and not static
+  const filter = searchParams?.capacity ?? "all";
+
   return (
     <div>
       {/* This part is not concerned with data fetching so need not show loading spinner.
@@ -25,12 +32,18 @@ export default function Page() {
         Welcome to paradise.
       </p>
 
+      <div className="flex justify-end mb-8">
+        <Filter />
+      </div>
+
       {/* Wrapping CabinList in Suspense because it's concerned with loading of cabins.
           The whole component of Page don't need to be replaced with Spinner, only the CabinList.
           For such granular control over loading we wrap the data fetching concerned component in suspense. */}
 
-      <Suspense fallback={<Loading />}>
-        <CabinList />
+      {/* Unfortunately, for navigation i.e transition suspense won't show fallback, so we need to use key prop */}
+
+      <Suspense fallback={<Loading />} key={filter}>
+        <CabinList filter={filter} />
       </Suspense>
     </div>
   );
