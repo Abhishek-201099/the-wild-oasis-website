@@ -6,8 +6,6 @@ import bg from "@/public/bg.png";
 export default function Home() {
   return (
     <main className="mt-24">
-      {/* @@@ Use fill to cover the entire parent if you don't prefer height and width to be specified. */}
-      {/* @@@ Placeholder-blur will placehold a blur before the image has been loaded. */}
       <Image
         src={bg}
         fill

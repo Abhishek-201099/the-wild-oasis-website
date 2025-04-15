@@ -1,10 +1,5 @@
 "use client";
 
-// ### Setting up error boundary
-// This error component will receive error and reset as params.
-// We can also provide individual error components to each feature just like loading.jsx
-
-// @@@ Also this should be a client component since we are reseting upong click so interactivity.
 export default function Error({ error, reset }) {
   return (
     <main className="flex justify-center items-center flex-col gap-6">

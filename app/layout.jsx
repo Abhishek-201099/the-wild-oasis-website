@@ -1,7 +1,5 @@
-// Import the font directly in nextJs.
 import { Josefin_Sans } from "next/font/google";
 
-// Then use it to configure the font and attach the className to a element.
 const josefin = Josefin_Sans({
   subsets: ["latin"],
   display: "swap",
@@ -10,11 +8,7 @@ const josefin = Josefin_Sans({
 import "@/app/_styles/globals.css";
 import Header from "@/starter/components/Header";
 
-// Export metadata instead of flushing in head tag.
-// @@@ '%s' will be replaced by the title in individual pages (if provided) || default will be shown.
-// @@@ For favicon, place the icon in the app folder with the name of 'icon'.
 export const metadata = {
-  // title: "The wild oasis",
   title: {
     template: "%s | The Wild Oasis",
     default: "Welcome | The Wild Oasis",

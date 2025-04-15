@@ -5,21 +5,13 @@ import { getCabin, getCabins } from "@/app/_lib/data-service";
 import { EyeSlashIcon, MapPinIcon, UsersIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 
-// @@@ This is for static naming.
-// export const metadata = {
-//   title: "Cabin",
-// };
+export const revalidate = 60 * 60 * 24;
 
-// @@@ If we want dynamic title then we have to export generateMetadata function which will have params available to it.
 export async function generateMetadata({ params }) {
   const { name } = await getCabin(params.cabinId);
   return { title: `Cabin ${name}` };
 }
 
-// Making dynamic pages static using generateStaticParams.
-// This will generate static site at build time.
-// If new cabin is added then it won't be reflected since it was statically generated at build time.
-// That's the reason we implement ISR for dynamic data concerns using any caching opt out (eg - revalidate)
 export async function generateStaticParams() {
   const cabins = await getCabins();
   const ids = cabins.map((cabin) => {
@@ -28,12 +20,9 @@ export async function generateStaticParams() {
   return ids;
 }
 
-// We can implement dynamic routes by creating subfolder with ['something']
 export default async function Page({ params }) {
-  // Page will receive params prop and we can then extract cabinId from it.
   const { cabinId } = params;
 
-  // While it is fetching cabin data, the parent loader i.e cabins - loading.jsx will be shown.
   const cabin = await getCabin(cabinId);
 
   const { id, name, maxCapacity, regularPrice, discount, image, description } =

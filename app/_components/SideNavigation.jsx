@@ -28,7 +28,6 @@ const navLinks = [
 ];
 
 export default function SideNavigation() {
-  // this hook let us read the pathname such as /account/reservations etc.
   const pathName = usePathname();
 
   return (

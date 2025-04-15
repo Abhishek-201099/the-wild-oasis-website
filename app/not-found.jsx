@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-// not-found error is specifically for handling missing routes or resources, while normal errors caught by error boundaries handle unexpected exceptions that occur during the application's runtime.
 export default function NotFound() {
   return (
     <main className="text-center space-y-6 mt-4">
