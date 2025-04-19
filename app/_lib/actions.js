@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { auth, signIn, signOut } from "./auth";
 import { supabase } from "./supabase";
+import { getBookings } from "./data-service";
+import { redirect } from "next/navigation";
 
 export async function signInAction() {
   await signIn("google", { redirectTo: "/account" });
@@ -43,4 +45,58 @@ export async function updateGuest(formData) {
   // So we need to revalidate this cache to get the fresh data immediately after updation.
   // We use revalidatePath('path') method from next/cache to manually revalidate it.
   revalidatePath("account/profile");
+}
+
+export async function deleteReservation(bookingId) {
+  const session = await auth();
+  if (!session) throw new Error("You must be logged in");
+
+  // @@@ Any guest with the curl request of POST can delete booking other than its own.
+  // @@@ To avoid that we check whether the bookingId that is to be deleted is related to the bookings/reservations made by the authenticated guest.
+  // @@@ If not that means the guest is trying to delete a booking other than its own.
+  const guestBookings = await getBookings(session.user.guestId);
+  const guestBookingIds = guestBookings.map((booking) => booking.id);
+  if (!guestBookingIds.includes(bookingId))
+    throw new Error("You are not allowed to delete this booking");
+
+  const { data, error } = await supabase
+    .from("bookings")
+    .delete()
+    .eq("id", bookingId);
+
+  if (error) {
+    console.error(error);
+    throw new Error("Booking could not be deleted");
+  }
+
+  revalidatePath("/account/reservations");
+}
+
+export async function updateReservation(formData) {
+  const session = await auth();
+  if (!session) throw new Error("You must be logged in");
+
+  const numGuests = Number(formData.get("numGuests"));
+  const observations = formData.get("observations");
+  const id = Number(formData.get("bookingId"));
+
+  const guestBookings = await getBookings(session.user.guestId);
+  const guestBookingIds = guestBookings.map((booking) => booking.id);
+  if (!guestBookingIds.includes(Number(id)))
+    throw new Error("You are not allowed to update this booking");
+
+  const updatedFields = { numGuests, observations };
+
+  const { error } = await supabase
+    .from("bookings")
+    .update(updatedFields)
+    .eq("id", id);
+
+  if (error) {
+    throw new Error("Booking could not be updated");
+  }
+
+  revalidatePath(`/account/reservations/edit/${id}`);
+  revalidatePath("/account/reservations");
+  redirect("/account/reservations");
 }
